@@ -47,14 +47,14 @@ async function routesMiddleware({server, app, config, prefix = ""}, defaultRoute
   );
 
   let additionalRoutes = {}
-  config.routes.forEach(function(item) {
-    additionalRoutes[item.src] = function({req, res, query, pattern, next, methods}) {
+  config.routes.forEach(function (item) {
+    additionalRoutes[item.src] = function ({ req, res, query, pattern, next, methods }) {
       if (item.build) {
-        if (item.build === '@now/next') {    
+        if (item.build === '@now/next') {
           const resultUrl = XRegExp.replace(req.url, pattern, item.dest)
           const additionalParams = url.parse(resultUrl, true)
           const pathname = item.dest.split('?')[0]
-          const finalQuery = {...additionalParams.query, ...query}
+          const finalQuery = { ...additionalParams.query, ...query }
           app.render(req, res, pathname, finalQuery)
         } else if (item.build === '@now/static') {
           // const filePath = item.dest
@@ -66,11 +66,11 @@ async function routesMiddleware({server, app, config, prefix = ""}, defaultRoute
           const resultUrl = XRegExp.replace(req.url, pattern, item.dest)
           console.log('resultUrl', resultUrl)
           if (existsSync('../../' + resultUrl)) {
-            const routeApp = require('../../' + resultUrl)
+            const routeApp = require('../' + resultUrl)
             routeApp.handle(req, res, next)
           }
           else {
-            const defaultApp = require('../../routes')
+            const defaultApp = require('../routes')
             defaultApp.handle(req, res, next)
           }
         }
