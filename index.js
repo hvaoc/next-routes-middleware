@@ -57,8 +57,14 @@ async function routesMiddleware({server, app, config, prefix = ""}, defaultRoute
           const finalQuery = {...additionalParams.query, ...query}
           app.render(req, res, pathname, finalQuery)
         } else if (item.build === '@now/static') {
-          const filePath = item.dest
-          app.serveStatic(req, res, filePath)
+          // const filePath = item.dest
+          // app.serveStatic(req, res, filePath)
+          const filePath = join(__dirname, '../../', item.dest)
+          res.sendFile(filePath)
+        } else if (item.build === '@now/node') {
+          // Works only for Express App
+          const routeApp = require('../../' + item.dest)
+          routeApp.handle(req, res, next)
         }
       } else {
         return next()
