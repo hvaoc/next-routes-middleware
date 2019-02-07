@@ -63,8 +63,16 @@ async function routesMiddleware({server, app, config, prefix = ""}, defaultRoute
           res.sendFile(filePath)
         } else if (item.build === '@now/node') {
           // Works only for Express App
-          const routeApp = require('../../' + item.dest)
-          routeApp.handle(req, res, next)
+          const resultUrl = XRegExp.replace(req.url, pattern, item.dest)
+          console.log('resultUrl', resultUrl)
+          if (existsSync('../../' + resultUrl)) {
+            const routeApp = require('../../' + resultUrl)
+            routeApp.handle(req, res, next)
+          }
+          else {
+            const defaultApp = require('../../routes')
+            defaultApp.handle(req, res, next)
+          }
         }
       } else {
         return next()
